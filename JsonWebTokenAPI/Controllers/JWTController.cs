@@ -57,12 +57,12 @@ namespace JsonWebTokenAPI.Controllers
         }
 
         // GET /jwt/role
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "admins")]
         [HttpGet("role")]
         public IActionResult GetRole()
         {
-            var rule = HttpContext.User.Claims.Where(claim => claim.Type == ClaimTypes.Role).Select(claim => claim.Value);
-            return Ok(rule);
+            var role = HttpContext.User.Claims.Where(claim => claim.Type == JwtRegisteredClaimNames.Sub).Select(claim => claim.Value);
+            return Ok(role);
         }
     }
 
@@ -85,6 +85,9 @@ namespace JsonWebTokenAPI.Controllers
                 //new(JwtRegisteredClaimNames.Nbf, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString()),
                 //new(JwtRegisteredClaimNames.Iat, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString()),
                 new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()), // JWT ID
+
+                // You can add more registered claims from the list
+                // https://learn.microsoft.com/en-us/dotnet/api/microsoft.identitymodel.jsonwebtokens.jwtregisteredclaimnames
             };
 
             // You can define your "roles" to your Claims

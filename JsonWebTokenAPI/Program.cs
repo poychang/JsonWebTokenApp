@@ -17,31 +17,27 @@ namespace JsonWebTokenAPI
                 .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
-                    // 當驗證失敗時，回應標頭會包含 WWW-Authenticate 標頭，這裡會顯示失敗的詳細錯誤原因
-                    options.IncludeErrorDetails = true; // 預設值為 true，有時會特別關閉
+                    // When the verification fails, the response header will include the WWW-Authenticate, which displays the detailed for the failure
+                    // Sometimes, it will be specifically turned off
+                    options.IncludeErrorDetails = true; // default is 'true'
 
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
-                        // 透過這項宣告，就可以從 "sub" 取值並設定給 User.Identity.Name
-                        NameClaimType = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier",
-                        // 透過這項宣告，就可以從 "roles" 取值，並可讓 [Authorize] 判斷角色
-                        RoleClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
-
-                        // 一般我們都會驗證 Issuer
+                        // Typically, we would verify the Issuer
                         ValidateIssuer = true,
                         ValidIssuer = "Jwt:Issuer",
 
-                        // 通常不太需要驗證 Audience
+                        // Usually, there's not much need to verify the Audience
                         ValidateAudience = false,
-                        //ValidAudience = "JwtAuthDemo", // 不驗證就不需要填寫
+                        //ValidAudience = "JwtAuthDemo", // No need to fill out if not verified
 
-                        // 一般我們都會驗證 Token 的有效期間
+                        // Generally, we always verify the validity period of the Token
                         ValidateLifetime = true,
 
-                        // 如果 Token 中包含 key 才需要驗證，一般都只有簽章而已
+                        // If the token contains a key, it needs to be verified; usually, it only has a signature
                         ValidateIssuerSigningKey = false,
 
-                        // "1234567890123456" 應該從 IConfiguration 取得
+                        // Security key should above 16 characters
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("SECURITY_KEY_SHOULD_ABOVE_16_CHARACTERS"))
                     };
                 });
