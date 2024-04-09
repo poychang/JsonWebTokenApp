@@ -1,7 +1,6 @@
 ﻿using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using System.Text.Json;
 
 namespace JsonWebTokenApp
 {
@@ -12,16 +11,21 @@ namespace JsonWebTokenApp
         static void Main(string[] args)
         {
             var token = GenerateToken();
-            Console.WriteLine($"JWT: {token}");
+            Console.WriteLine($"Generate JWT: {token}");
             Console.WriteLine($"\n----------\n");
 
-            var validation = ValidateToken(token);
-            Console.WriteLine($"JWT validation: {validation}");
-            Console.WriteLine($"\n----------\n");
+            var isContinue = true;
+            while (isContinue)
+            {
+                Console.WriteLine($"Validate JWT:");
+                var checkingToken = Console.ReadLine() ?? string.Empty;
+                var result = ValidateToken(checkingToken);
+                Console.WriteLine($"Validation Result: {result}");
+                Console.WriteLine($"\n----------\n");
 
-            var data = JWTDecoder(token);
-            Console.WriteLine($"JWT Decode: {data}");
-
+                Console.WriteLine($"Continue?");
+                isContinue = Console.ReadLine()?.ToLower() is "y";
+            }
         }
 
         static string GenerateToken()
@@ -44,6 +48,8 @@ namespace JsonWebTokenApp
 
         static bool ValidateToken(string token)
         {
+            if (string.IsNullOrEmpty(token)) return false;
+
             var handler = new JsonWebTokenHandler();
             var validationParameters = new TokenValidationParameters
             {
@@ -58,20 +64,14 @@ namespace JsonWebTokenApp
             };
             try
             {
-                var claimsPrincipal = handler.ValidateTokenAsync(token, validationParameters);
-                return true;
+                var validateResult = handler.ValidateTokenAsync(token, validationParameters).GetAwaiter().GetResult();
+                return validateResult.IsValid;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 return false;
             }
-        }
-
-        static string JWTDecoder(string token)
-        {
-            var handler = new JsonWebTokenHandler();
-            var data = handler.ReadJsonWebToken(token);
-            return JsonSerializer.Serialize(data, new JsonSerializerOptions { WriteIndented = true });
         }
     }
 }
