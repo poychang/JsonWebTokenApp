@@ -1,6 +1,32 @@
-@JsonWebTokenAPI_HostAddress = http://localhost:5045
+@HostAddress = https://localhost:7225
+@token = JWT_TOKEN
 
-GET {{JsonWebTokenAPI_HostAddress}}/weatherforecast/
-Accept: application/json
+# Login to get JWT token
+POST {{HostAddress}}/jwt/login/
+Content-Type: application/json
+
+{
+    "name": "user",
+    "key": "key"
+}
 
 ###
+# decode JWT token
+GET {{HostAddress}}/jwt/decode/
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+
+###
+# every user can access this endpoint
+
+GET {{HostAddress}}/jwt/role/
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+###
+# need admin role to access this endpoint
+
+GET {{HostAddress}}/jwt/claims/
+Content-Type: application/json
+Authorization: Bearer {{token}}

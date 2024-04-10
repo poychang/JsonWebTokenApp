@@ -20,13 +20,7 @@ namespace JsonWebTokenAPI.Controllers
             if (Validate(login))
             {
                 var expireMinutes = 10;
-                return Ok(new
-                {
-                    App = login.Name,
-                    Token = JwtHelper.GenerateToken(login.Name, expireMinutes),
-                    Create = DateTime.Now,
-                    Expire = DateTime.Now.AddMinutes(expireMinutes),
-                });
+                return Ok(JwtHelper.GenerateToken(login.Name, expireMinutes));
             }
             else
             {
@@ -43,26 +37,26 @@ namespace JsonWebTokenAPI.Controllers
         {
             var handler = new JsonWebTokenHandler();
             var token = HttpContext.Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
-            var data = handler.ReadJsonWebToken(token);
-            return Ok(data);
+            var jwt = handler.ReadJsonWebToken(token);
+            return Ok($"{Base64UrlEncoder.Decode(jwt.EncodedHeader)}\n\n{Base64UrlEncoder.Decode(jwt.EncodedPayload)}");
+        }
+
+        // GET /jwt/role
+        [Authorize]
+        [HttpGet("role")]
+        public IActionResult GetRole()
+        {
+            var role = HttpContext.User.Claims.Where(claim => claim.Type == ClaimTypes.Role).Select(claim => claim.Value);
+            return Ok(role);
         }
 
         // GET /jwt/claims
-        [Authorize]
+        [Authorize(Roles = "admin")]
         [HttpGet("claims")]
         public IActionResult GetClaims()
         {
             var claims = HttpContext.User.Claims.Select(claim => new { claim.Type, claim.Value });
             return Ok(claims);
-        }
-
-        // GET /jwt/role
-        [Authorize(Roles = "admins")]
-        [HttpGet("role")]
-        public IActionResult GetRole()
-        {
-            var role = HttpContext.User.Claims.Where(claim => claim.Type == JwtRegisteredClaimNames.Sub).Select(claim => claim.Value);
-            return Ok(role);
         }
     }
 
@@ -72,14 +66,15 @@ namespace JsonWebTokenAPI.Controllers
     {
         const string Issuer = "Jwt:Issuer";
         const string SecureKey = "SECURITY_KEY_SHOULD_ABOVE_16_CHARACTERS";
-        public static string GenerateToken(string userName, int expireMinutes = 10)
+
+        public static string GenerateToken(string name, int expireMinutes = 10)
         {
             // Configuring "Claims" to your JWT Token
             var claims = new List<Claim>
             {
                 // In RFC 7519 (Section#4), there are defined 7 built-in Claims, but we mostly use 2 of them
                 //new(JwtRegisteredClaimNames.Iss, "issuer"),
-                new(JwtRegisteredClaimNames.Sub, userName), // User.Identity.Name
+                new(JwtRegisteredClaimNames.Sub, name),
                 //new(JwtRegisteredClaimNames.Aud, "The Audience"),
                 //new(JwtRegisteredClaimNames.Exp, DateTimeOffset.UtcNow.AddMinutes(expireMinutes).ToUnixTimeSeconds().ToString()),
                 //new(JwtRegisteredClaimNames.Nbf, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString()),
@@ -91,8 +86,10 @@ namespace JsonWebTokenAPI.Controllers
             };
 
             // You can define your "roles" to your Claims
-            claims.Add(new Claim(ClaimTypes.Role, "admin"));
-            claims.Add(new Claim(ClaimTypes.Role, "users"));
+            if (name == "admin")
+                claims.Add(new Claim(ClaimTypes.Role, "admin"));
+            else
+                claims.Add(new Claim(ClaimTypes.Role, "users"));
             // You can add custom claims as well
             claims.Add(new Claim("custom", "claim"));
 

@@ -23,6 +23,13 @@ namespace JsonWebTokenAPI
 
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
+                        // This declaration can allow [Authorize] to determine roles from "ClaimTypes.Role"
+                        RoleClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role", // default
+                        // This declaration can bind "User.Identity.Name" with "ClaimTypes.Name"
+                        NameClaimType = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name", // default
+                        // If you want to bind "User.Identity.Name" with "sub", can change this declaration to
+                        //NameClaimType = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier",
+
                         // Typically, we would verify the Issuer
                         ValidateIssuer = true,
                         ValidIssuer = "Jwt:Issuer",
