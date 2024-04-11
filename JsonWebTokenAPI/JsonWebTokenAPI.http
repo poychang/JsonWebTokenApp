@@ -1,7 +1,7 @@
 @HostAddress = https://localhost:7225
-@token = JWT_TOKEN
+@token = JWT
 
-# Login to get JWT token
+# Login to get JWT
 POST {{HostAddress}}/jwt/login/
 Content-Type: application/json
 
@@ -11,13 +11,13 @@ Content-Type: application/json
 }
 
 ###
-# decode JWT token
+# decode JWT
 GET {{HostAddress}}/jwt/decode-header/
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 ###
-# decode JWT token
+# decode JWT
 GET {{HostAddress}}/jwt/decode-payload/
 Content-Type: application/json
 Authorization: Bearer {{token}}
