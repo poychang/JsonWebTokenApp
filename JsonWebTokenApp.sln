@@ -5,7 +5,9 @@ VisualStudioVersion = 17.9.34518.117
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JsonWebTokenApp", "JsonWebTokenApp\JsonWebTokenApp.csproj", "{BB5BFB06-7261-4C04-BAF0-4360F30368C3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsonWebTokenAPI", "JsonWebTokenAPI\JsonWebTokenAPI.csproj", "{162C07D0-6B45-4094-B7E6-40860BD7FD85}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JsonWebTokenAPI", "JsonWebTokenAPI\JsonWebTokenAPI.csproj", "{162C07D0-6B45-4094-B7E6-40860BD7FD85}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsonWebTokenMiniAPI", "JsonWebTokenMiniAPI\JsonWebTokenMiniAPI.csproj", "{D5E6093C-04E5-4D64-9A0E-8C050347865D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{162C07D0-6B45-4094-B7E6-40860BD7FD85}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{162C07D0-6B45-4094-B7E6-40860BD7FD85}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{162C07D0-6B45-4094-B7E6-40860BD7FD85}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D5E6093C-04E5-4D64-9A0E-8C050347865D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D5E6093C-04E5-4D64-9A0E-8C050347865D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D5E6093C-04E5-4D64-9A0E-8C050347865D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D5E6093C-04E5-4D64-9A0E-8C050347865D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

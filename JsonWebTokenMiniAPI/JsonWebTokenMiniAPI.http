@@ -1,0 +1,37 @@
+@HostAddress = https://localhost:7167
+@token = JWT_TOKEN
+
+# Login to get JWT token
+POST {{HostAddress}}/jwt/login/
+Content-Type: application/json
+
+{
+    "name": "user",
+    "key": "key"
+}
+
+###
+# decode JWT token
+GET {{HostAddress}}/jwt/decode-header/
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+###
+# decode JWT token
+GET {{HostAddress}}/jwt/decode-payload/
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+###
+# anyone can access this endpoint
+
+GET {{HostAddress}}/jwt/anyone/
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+###
+# every user can access this endpoint
+
+GET {{HostAddress}}/jwt/user/
+Content-Type: application/json
+Authorization: Bearer {{token}}
