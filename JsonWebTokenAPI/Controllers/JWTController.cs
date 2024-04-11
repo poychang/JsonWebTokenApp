@@ -30,15 +30,25 @@ namespace JsonWebTokenAPI.Controllers
             static bool Validate(LoginModel login) => true;
         }
 
-        // GET /jwt/decode
+        // GET /jwt/decode-header
         [Authorize]
-        [HttpGet("decode")]
-        public IActionResult Decode()
+        [HttpGet("decode-header")]
+        public IActionResult DecodeHeader()
         {
             var handler = new JsonWebTokenHandler();
             var token = HttpContext.Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
             var jwt = handler.ReadJsonWebToken(token);
-            return Ok($"{Base64UrlEncoder.Decode(jwt.EncodedHeader)}\n\n{Base64UrlEncoder.Decode(jwt.EncodedPayload)}");
+            return Ok(Base64UrlEncoder.Decode(jwt.EncodedHeader));
+        }
+        // GET /jwt/decode-payload
+        [Authorize]
+        [HttpGet("decode-payload")]
+        public IActionResult DecodePayload()
+        {
+            var handler = new JsonWebTokenHandler();
+            var token = HttpContext.Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+            var jwt = handler.ReadJsonWebToken(token);
+            return Ok(Base64UrlEncoder.Decode(jwt.EncodedPayload));
         }
 
         // GET /jwt/role
@@ -64,8 +74,8 @@ namespace JsonWebTokenAPI.Controllers
 
     public static class JwtHelper
     {
-        const string Issuer = "Jwt:Issuer";
-        const string SecureKey = "SECURITY_KEY_SHOULD_ABOVE_16_CHARACTERS";
+        public static string Issuer = "Jwt:Issuer";
+        public static string SecureKey = "SECURITY_KEY_SHOULD_ABOVE_16_CHARACTERS";
 
         public static string GenerateToken(string name, int expireMinutes = 10)
         {
@@ -89,9 +99,9 @@ namespace JsonWebTokenAPI.Controllers
             if (name == "admin")
                 claims.Add(new Claim(ClaimTypes.Role, "admin"));
             else
-                claims.Add(new Claim(ClaimTypes.Role, "users"));
+                claims.Add(new Claim(ClaimTypes.Role, "user"));
             // You can add custom claims as well
-            claims.Add(new Claim("custom", "claim"));
+            claims.Add(new Claim("custom", "custom-claim"));
 
             var claimsIdentity = new ClaimsIdentity(claims);
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(SecureKey));
@@ -101,7 +111,7 @@ namespace JsonWebTokenAPI.Controllers
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Issuer = Issuer,
-                //Audience = issuer, // Sometimes you don't have to define Audience.
+                Audience = name, // Sometimes you don't have to define Audience.
                 //NotBefore = DateTime.Now, // Default is DateTime.Now
                 //IssuedAt = DateTime.Now, // Default is DateTime.Now
                 Subject = claimsIdentity,
