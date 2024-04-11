@@ -9,7 +9,7 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-#region STEP 2: Add Authentication service
+#region STEP 2: Add Authentication service to DI container
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -40,8 +40,10 @@ app.MapPost("/jwt/login", (LoginModel login) =>
 {
     var expireMinutes = 10;
 
-    if (Validate(login)) return Results.Text(JwtHelper.GenerateToken(login.Name, expireMinutes));
-    else return Results.BadRequest();
+    if (Validate(login))
+        return Results.Text(JwtHelper.GenerateToken(login.Name, expireMinutes));
+    else
+        return Results.BadRequest();
 
     static bool Validate(LoginModel login) => true;
 });
