@@ -34,9 +34,8 @@ namespace JsonWebTokenApp
             var token = handler.CreateToken(new SecurityTokenDescriptor
             {
                 Issuer = "https://jwt.poychang.net",
-                Audience = "https://api.poychang.net",
-                Expires = DateTime.UtcNow.AddMinutes(30),
                 IssuedAt = DateTime.UtcNow,
+                Expires = DateTime.UtcNow.AddMinutes(30),
                 Claims = new Dictionary<string, object> { { "role", "admin" } },
                 SigningCredentials = new SigningCredentials(
                     new SymmetricSecurityKey(Encoding.UTF8.GetBytes(SecureKey)),
@@ -54,11 +53,8 @@ namespace JsonWebTokenApp
             var validationParameters = new TokenValidationParameters
             {
                 ValidIssuer = "https://jwt.poychang.net",
-                ValidAudience = "https://api.poychang.net",
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(SecureKey)),
-                ValidateIssuerSigningKey = true,
                 ValidateIssuer = true,
-                ValidateAudience = true,
                 ValidateLifetime = true,
                 ClockSkew = TimeSpan.Zero
             };
