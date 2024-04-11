@@ -5,7 +5,7 @@ using System.Security.Claims;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
-// STEP 2: Add Authentication service
+#region STEP 2: Add Authentication service
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -20,18 +20,20 @@ builder.Services
         };
     });
 builder.Services.AddAuthorization();
+#endregion
 
 // Add services to the container.
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-// STEP 3: Add Authentication and Authorization middleware
 app.UseHttpsRedirection();
+#region STEP 3: Add Authentication and Authorization middleware
 app.UseAuthentication();
 app.UseAuthorization();
+#endregion
 
-// STEP 4: Add JWT API
+#region STEP 4: Add JWT API
 app.MapPost("/jwt/login", (LoginModel login) =>
 {
     var expireMinutes = 10;
@@ -58,12 +60,13 @@ app.MapGet("/jwt/decode-header", (HttpContext context) =>
 });
 app.MapGet("/jwt/anyone", () => Results.Ok("hi anyone"));
 app.MapGet("/jwt/user", () => Results.Ok("hi user")).RequireAuthorization();
+#endregion
 
 app.Run();
 
 public record LoginModel(string Name, string Key);
 
-// STEP 1: Add JwtHelper to generate JWT Token
+#region STEP 1: Add JwtHelper to generate JWT Token
 public static class JwtHelper
 {
     public static string Issuer = "Jwt:Issuer";
@@ -82,7 +85,6 @@ public static class JwtHelper
             // You can add custom claims as well
             new Claim("custom", "custom-claim"),
         };
-
         var claimsIdentity = new ClaimsIdentity(claims);
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(SecureKey));
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
@@ -104,3 +106,4 @@ public static class JwtHelper
         return token;
     }
 }
+#endregion
