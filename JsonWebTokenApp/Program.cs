@@ -6,6 +6,8 @@ namespace JsonWebTokenApp
 {
     public class Program
     {
+        const string Issuer = "Jwt:Issuer";
+        const string Audience = "Jwt:Audience";
         const string SecureKey = "SECURITY_KEY_SHOULD_ABOVE_16_CHARACTERS";
 
         static void Main(string[] args)
@@ -22,9 +24,6 @@ namespace JsonWebTokenApp
                 var result = ValidateToken(checkingToken);
                 Console.WriteLine($"Validation Result: {result}");
                 Console.WriteLine($"\n----------\n");
-
-                Console.WriteLine($"Continue?");
-                isContinue = Console.ReadLine()?.ToLower() is "y";
             }
         }
 
@@ -33,13 +32,14 @@ namespace JsonWebTokenApp
             var handler = new JsonWebTokenHandler();
             var token = handler.CreateToken(new SecurityTokenDescriptor
             {
-                Issuer = "https://jwt.poychang.net",
+                Issuer = Issuer,
+                Audience = Audience,
                 IssuedAt = DateTime.UtcNow,
-                Expires = DateTime.UtcNow.AddMinutes(30),
-                Claims = new Dictionary<string, object> { { "role", "admin" } },
+                Expires = DateTime.UtcNow.AddMinutes(1),
+                Claims = new Dictionary<string, object> { { "role", "user" } },
                 SigningCredentials = new SigningCredentials(
                     new SymmetricSecurityKey(Encoding.UTF8.GetBytes(SecureKey)),
-                    SecurityAlgorithms.HmacSha256Signature
+                    SecurityAlgorithms.HmacSha256
                 ),
             });
             return token;
@@ -52,15 +52,16 @@ namespace JsonWebTokenApp
             var handler = new JsonWebTokenHandler();
             var validationParameters = new TokenValidationParameters
             {
-                ValidIssuer = "https://jwt.poychang.net",
+                ValidIssuer = Issuer,
+                ValidAudience = Audience,
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(SecureKey)),
-                ValidateIssuer = true,
                 ValidateLifetime = true,
-                ClockSkew = TimeSpan.Zero
+                ClockSkew = TimeSpan.Zero,
             };
             try
             {
                 var validateResult = handler.ValidateTokenAsync(token, validationParameters).GetAwaiter().GetResult();
+                Console.WriteLine(validateResult.Exception.Message);
                 return validateResult.IsValid;
             }
             catch (Exception ex)

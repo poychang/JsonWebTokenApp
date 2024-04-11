@@ -1,10 +1,14 @@
+#region STEP 0: Install NuGet package Microsoft.AspNetCore.Authentication.JwtBearer
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
+#endregion
 using System.Security.Claims;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
 #region STEP 2: Add Authentication service
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -21,8 +25,6 @@ builder.Services
     });
 builder.Services.AddAuthorization();
 #endregion
-
-// Add services to the container.
 
 var app = builder.Build();
 

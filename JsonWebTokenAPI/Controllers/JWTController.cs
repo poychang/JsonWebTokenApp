@@ -75,6 +75,7 @@ namespace JsonWebTokenAPI.Controllers
     public static class JwtHelper
     {
         public static string Issuer = "Jwt:Issuer";
+        public static string Audience = "Jwt:Audience";
         public static string SecureKey = "SECURITY_KEY_SHOULD_ABOVE_16_CHARACTERS";
 
         public static string GenerateToken(string name, int expireMinutes = 10)
@@ -111,7 +112,7 @@ namespace JsonWebTokenAPI.Controllers
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Issuer = Issuer,
-                Audience = name, // Sometimes you don't have to define Audience.
+                Audience = Audience, // Sometimes you don't have to define Audience.
                 //NotBefore = DateTime.Now, // Default is DateTime.Now
                 //IssuedAt = DateTime.Now, // Default is DateTime.Now
                 Subject = claimsIdentity,
