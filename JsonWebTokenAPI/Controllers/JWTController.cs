@@ -35,6 +35,7 @@ namespace JsonWebTokenAPI.Controllers
             var jwt = handler.ReadJsonWebToken(token);
             return Ok(Base64UrlEncoder.Decode(jwt.EncodedHeader));
         }
+
         // GET /jwt/decode-payload
         [Authorize]
         [HttpGet("decode-payload")]
@@ -93,7 +94,10 @@ namespace JsonWebTokenAPI.Controllers
 
             // You can define your "roles" to your Claims
             if (name == "admin")
+            {
+                claims.Add(new Claim(ClaimTypes.Role, "user"));
                 claims.Add(new Claim(ClaimTypes.Role, "admin"));
+            }
             else
                 claims.Add(new Claim(ClaimTypes.Role, "user"));
             // You can add custom claims as well

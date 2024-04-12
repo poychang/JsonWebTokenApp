@@ -23,7 +23,7 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 ###
-# every user can access this endpoint
+# every user who has valid JWT can access this endpoint
 
 GET {{HostAddress}}/jwt/role/
 Content-Type: application/json
