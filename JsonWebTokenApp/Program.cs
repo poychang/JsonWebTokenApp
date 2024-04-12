@@ -61,7 +61,7 @@ namespace JsonWebTokenApp
             try
             {
                 var validateResult = handler.ValidateTokenAsync(token, validationParameters).GetAwaiter().GetResult();
-                Console.WriteLine(validateResult.Exception.Message);
+                Console.WriteLine(validateResult.Exception?.Message);
                 return validateResult.IsValid;
             }
             catch (Exception ex)

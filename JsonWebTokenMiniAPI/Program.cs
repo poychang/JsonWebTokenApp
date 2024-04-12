@@ -1,4 +1,4 @@
-#region STEP 0: Install NuGet package Microsoft.AspNetCore.Authentication.JwtBearer
+#region STEP 1: Install NuGet package Microsoft.AspNetCore.Authentication.JwtBearer
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
@@ -35,7 +35,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 #endregion
 
-#region STEP 4: Add JWT API
+#region STEP 5: Add JWT API
 app.MapPost("/jwt/login", (LoginModel login) =>
 {
     if (Validate(login))
@@ -68,7 +68,7 @@ app.Run();
 
 public record LoginModel(string Name, string Key);
 
-#region STEP 1: Add JwtHelper to generate JWT Token
+#region STEP 4: Add JwtHelper to generate JWT Token
 public static class JwtHelper
 {
     public static string Issuer = "Jwt:Issuer";
