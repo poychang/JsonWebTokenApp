@@ -94,10 +94,7 @@ namespace JsonWebTokenAPI.Controllers
 
             // You can define your "roles" to your Claims
             if (name == "admin")
-            {
-                claims.Add(new Claim(ClaimTypes.Role, "user"));
                 claims.Add(new Claim(ClaimTypes.Role, "admin"));
-            }
             else
                 claims.Add(new Claim(ClaimTypes.Role, "user"));
             // You can add custom claims as well
