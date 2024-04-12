@@ -18,14 +18,9 @@ namespace JsonWebTokenAPI.Controllers
         public IActionResult Get(LoginModel login)
         {
             if (Validate(login))
-            {
-                var expireMinutes = 10;
-                return Ok(JwtHelper.GenerateToken(login.Name, expireMinutes));
-            }
+                return Ok(JwtHelper.GenerateToken(login.Name));
             else
-            {
                 return BadRequest();
-            }
 
             static bool Validate(LoginModel login) => true;
         }
@@ -78,12 +73,12 @@ namespace JsonWebTokenAPI.Controllers
         public static string Audience = "Jwt:Audience";
         public static string SecureKey = "SECURITY_KEY_SHOULD_ABOVE_16_CHARACTERS";
 
-        public static string GenerateToken(string name, int expireMinutes = 10)
+        public static string GenerateToken(string name, int expireMinutes = 1)
         {
             // Configuring "Claims" to your JWT Token
             var claims = new List<Claim>
             {
-                // In RFC 7519 (Section#4), there are defined 7 built-in Claims, but we mostly use 2 of them
+                // In RFC 7519 (Section#4), there are defined 7 built-in Claims
                 //new(JwtRegisteredClaimNames.Iss, "issuer"),
                 new(JwtRegisteredClaimNames.Sub, name),
                 //new(JwtRegisteredClaimNames.Aud, "The Audience"),
@@ -104,7 +99,6 @@ namespace JsonWebTokenAPI.Controllers
             // You can add custom claims as well
             claims.Add(new Claim("custom", "custom-claim"));
 
-            var claimsIdentity = new ClaimsIdentity(claims);
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(SecureKey));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
@@ -115,7 +109,7 @@ namespace JsonWebTokenAPI.Controllers
                 Audience = Audience, // Sometimes you don't have to define Audience.
                 //NotBefore = DateTime.Now, // Default is DateTime.Now
                 //IssuedAt = DateTime.Now, // Default is DateTime.Now
-                Subject = claimsIdentity,
+                Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.Now.AddMinutes(expireMinutes),
                 SigningCredentials = credentials
             };

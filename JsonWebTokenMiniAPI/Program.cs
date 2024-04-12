@@ -38,10 +38,8 @@ app.UseAuthorization();
 #region STEP 4: Add JWT API
 app.MapPost("/jwt/login", (LoginModel login) =>
 {
-    var expireMinutes = 10;
-
     if (Validate(login))
-        return Results.Text(JwtHelper.GenerateToken(login.Name, expireMinutes));
+        return Results.Text(JwtHelper.GenerateToken(login.Name));
     else
         return Results.BadRequest();
 
@@ -63,7 +61,7 @@ app.MapGet("/jwt/decode-header", (HttpContext context) =>
     return Results.Text(Base64UrlEncoder.Decode(jwt.EncodedHeader));
 });
 app.MapGet("/jwt/anyone", () => Results.Ok("hi anyone"));
-app.MapGet("/jwt/user", () => Results.Ok("hi user")).RequireAuthorization();
+app.MapGet("/jwt/user", () => Results.Ok("hi user, you have authorization")).RequireAuthorization();
 #endregion
 
 app.Run();
@@ -79,17 +77,15 @@ public static class JwtHelper
 
     public static string GenerateToken(string name, int expireMinutes = 1)
     {
-        // Configuring "Claims" to your JWT Token
+        // Configuring "Claims" to your JWT
         var claims = new List<Claim>
         {
             // Standard claims in RFC 7519
-            new(JwtRegisteredClaimNames.Iss, Issuer),
             new(JwtRegisteredClaimNames.Sub, name),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             // You can add custom claims as well
             new Claim("custom", "custom-claim"),
         };
-        var claimsIdentity = new ClaimsIdentity(claims);
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(SecureKey));
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
@@ -98,9 +94,9 @@ public static class JwtHelper
         {
             Issuer = Issuer,
             Audience = Audience,
-            Subject = claimsIdentity,
+            Subject = new ClaimsIdentity(claims),
             Expires = DateTime.Now.AddMinutes(expireMinutes),
-            SigningCredentials = credentials
+            SigningCredentials = credentials,
         };
 
         // Generate a JWT
